@@ -1,3 +1,4 @@
+import json
 import csv
 
 def getCsvData(path):
@@ -24,3 +25,15 @@ def getValidData(value):
         return None
     return valid_value
 print(getCsvData("./residuos2.csv"))
+
+def exportar_dados(dados, resumo, nome_arquivo="exportacao"):
+    with open(f"{nome_arquivo}.json", "w", encoding="utf-8") as f_json:
+        json.dump(resumo, f_json, ensure_ascii=False, indent=4)
+        
+    with open(f"{nome_arquivo}.csv", "w", newline="", encoding="utf-8") as f_csv:
+        cabecalho = dados.keys()
+
+        escritor = csv.DictWriter(f_csv, fieldnames=cabecalho)
+        
+        escritor.writeheader()
+        escritor.writerow(dados)
