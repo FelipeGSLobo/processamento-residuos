@@ -59,9 +59,23 @@ def exportar_dados(dados, resumo, nome_arquivo="exportacao"):
         json.dump(resumo, f_json, ensure_ascii=False, indent=4)
         
     with open(f"{nome_arquivo}.csv", "w", newline="", encoding="utf-8") as f_csv:
-        cabecalho = dados.keys()
+        if not dados:
+            print("Nenhum dado válido para exportar para CSV.")
+            return
+        
+        cabecalho = dados[0].keys()
 
         escritor = csv.DictWriter(f_csv, fieldnames=cabecalho)
         
         escritor.writeheader()
-        escritor.writerow(dados)
+        escritor.writerows(dados)
+
+dados_processados = getCsvData("./residuos2.csv")
+
+meu_resumo = {
+    "total_itens_processados": len(dados_processados),
+    "empresa": "Processadora de resíduos LTDA"
+}
+
+# 3. Exporta tudo
+exportar_dados(dados_processados, meu_resumo, "relatorio_final")
