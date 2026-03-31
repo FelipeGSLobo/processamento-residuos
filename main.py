@@ -1,21 +1,33 @@
 import json
 import csv
 import math
-from numbers import Number
+
+MATERIALS_COST = {
+    "Papel": 2,
+    "Plástico": 2,
+    "Metal": 5,
+    "Químico": 15, 
+}
 
 def getCsvData(path):
-    csv_data = []
-    with open(path, "r", newline="", encoding="utf-8") as f:
-        leitor = csv.DictReader(f, fieldnames=["residuo", "peso"])
-        for linha in leitor:
-            valor_valido = getValidData(linha["peso"])
-            if valor_valido is None:
-                continue
-            data = {"residuo": linha["residuo"], "peso": valor_valido}
-            csv_data.append(data)
-    return csv_data
+    print(f"Obtendo dados do arquivo: {path}")
+    try:
+        csv_data = []
+        with open(path, "r", newline="", encoding="utf-8") as f:
+            leitor = csv.DictReader(f, fieldnames=["residuo", "peso"])
+            for linha in leitor:
+                peso_valido = getValidWeight(linha["peso"])
+                material_valido = getValidMaterial(linha["residuo"])
+                if peso_valido is None or material_valido is None:
+                    continue
+                data = {"residuo": material_valido, "peso": peso_valido}
+                csv_data.append(data)
+        return csv_data
+    except FileNotFoundError:
+        print(f"Arquivo não encontrado: {path}")
+        return []
 
-def getValidData(value):
+def getValidWeight(value):
     try:
         if isinstance(value, str):
             value = value.strip().replace(',', '.')
@@ -31,7 +43,16 @@ def getValidData(value):
         return None
     return valid_value
 
-print(getCsvData("./residuos2.csv"))
+def getValidMaterial(value):
+    if not isinstance(value, str) or not value.strip():
+        print(f"Valor de resíduo inválido: '{value}'")
+        return None
+    if value.strip() not in MATERIALS_COST:
+        print(f"Material desconhecido: '{value}'")
+        return None
+    return value.strip()
+
+print(getCsvData("residuos2.csv"))
 
 def exportar_dados(dados, resumo, nome_arquivo="exportacao"):
     with open(f"{nome_arquivo}.json", "w", encoding="utf-8") as f_json:
