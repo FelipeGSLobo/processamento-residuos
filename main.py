@@ -1,5 +1,7 @@
 import json
 import csv
+import math
+from numbers import Number
 
 def getCsvData(path):
     csv_data = []
@@ -14,16 +16,21 @@ def getCsvData(path):
     return csv_data
 
 def getValidData(value):
-    valid_value = value
     try:
+        if isinstance(value, str):
+            value = value.strip().replace(',', '.')
         valid_value = float(value)
-    except ValueError:
-        print(f"Valor de peso inválido: {value}")
-        return None;
+        if math.isnan(valid_value):
+            print(f"Valor de peso inválido (NaN): '{value}'")
+            return None
+    except (ValueError, TypeError, AttributeError):
+        print(f"Valor de peso inválido (Erro de conversão): '{value}'")
+        return None
     if valid_value <= 0:
-        print(f"Valor de peso inválido: {value}")
+        print(f"Valor de peso inválido (Menor ou igual a 0): '{value}'")
         return None
     return valid_value
+
 print(getCsvData("./residuos2.csv"))
 
 def exportar_dados(dados, resumo, nome_arquivo="exportacao"):
