@@ -77,5 +77,4 @@ meu_resumo = {
     "empresa": "Processadora de resíduos LTDA"
 }
 
-# 3. Exporta tudo
 exportar_dados(dados_processados, meu_resumo, "relatorio_final")
